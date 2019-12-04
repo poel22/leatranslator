@@ -1,5 +1,5 @@
 <template>
-  <div class="hello">
+  <div id="container" :style="{ backgroundColor: currentColor }">
     <div class="main" v-if="!edit">
       <h1>{{ currentMessage }}</h1>
       <h2>{{ currentLetter }}</h2>
@@ -10,6 +10,7 @@
     <div class="edit" v-else>
       <h1>Farbe ändern</h1>
       <h2>{{ letterToEdit }}</h2>
+      <v-color-picker v-model="currentEditColor"></v-color-picker>
       <button id="save" @click="uploadData()">
         Daten Speichern
       </button>
@@ -30,6 +31,7 @@ export default {
   data() {
     return {
       edit: false,
+      currentEditColor: "",
       currentColor: "",
       currentMessage: "",
       currentLetter: "i <3 u",
@@ -40,7 +42,12 @@ export default {
   mounted() {
     this.setGreetingMessage();
     const setLetter = letter => {
-      if (letter.length == 1 && this.letters.includes(letter.toLowerCase())) {
+      console.log(this.colorData);
+      if (
+        !this.edit &&
+        letter.length == 1 &&
+        this.letters.includes(letter.toLowerCase())
+      ) {
         this.currentLetter = letter;
         if (this.colorData.hasOwnProperty(letter.toLowerCase())) {
           this.currentColor = this.colorData[letter.toLowerCase()];
@@ -59,7 +66,9 @@ export default {
       this.currentMessage = "Buchstabe eintippen:";
     },
     uploadData() {
-      // TODO
+      console.info("selected Color: ", this.currentEditColor);
+      this.currentColor = this.currentEditColor;
+      this.colorData[this.letterToEdit.toLowerCase()] = this.currentEditColor;
       this.edit = false;
     },
     editColor(letter) {
@@ -72,6 +81,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+#container {
+  height: 100vh;
+  width: 100vw;
+}
 h3 {
   margin: 40px 0 0;
 }
