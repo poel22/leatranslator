@@ -1,0 +1,13 @@
+{
+  "name": "leatranslatorbackend",
+  "version": "1.0.0",
+  "description": "backend for the frontend of the lea translator",
+  "main": "server.js",
+  "scripts": {},
+  "author": "Paul Hörmann",
+  "license": "ISC",
+  "dependencies": {
+    "body-parse": "^0.1.0",
+    "express": "^4.17.1"
+  }
+}
