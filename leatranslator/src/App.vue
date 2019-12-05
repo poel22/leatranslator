@@ -1,7 +1,7 @@
 <template>
-  <div id="app">
+  <v-app id="app">
     <ColorTranslator :colorData="{}" />
-  </div>
+  </v-app>
 </template>
 
 <script>

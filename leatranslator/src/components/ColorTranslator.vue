@@ -1,19 +1,35 @@
 <template>
   <div id="container" :style="{ backgroundColor: currentColor }">
-    <div class="main" v-if="!edit">
-      <h1>{{ currentMessage }}</h1>
-      <h2>{{ currentLetter }}</h2>
-      <button id="edit" @click="editColor(currentLetter)">
-        Farbe ändern
-      </button>
-    </div>
-    <div class="edit" v-else>
-      <h1>Farbe ändern</h1>
-      <h2>{{ letterToEdit }}</h2>
-      <v-color-picker v-model="currentEditColor"></v-color-picker>
-      <button id="save" @click="uploadData()">
-        Daten Speichern
-      </button>
+    <div id="backgroundContainer">
+      <div id="contentContainer">
+        <div class="main" v-if="!edit">
+          <h1>{{ currentMessage }}</h1>
+          <div id="letterContainer">
+            <input type="text" id="letterBox" :value="currentLetter" />
+          </div>
+          <button id="edit" @click="editColor(currentLetter)">
+            Farbe ändern
+          </button>
+        </div>
+        <div class="edit" v-else>
+          <h1>Farbe ändern</h1>
+          <div id="letterContainer">
+            <input
+              disabled
+              type="text"
+              id="letterBox"
+              v-model="currentLetter"
+            />
+          </div>
+          <v-color-picker
+            id="colorPicker"
+            v-model="currentEditColor"
+          ></v-color-picker>
+          <button id="save" @click="uploadData()">
+            Daten Speichern
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -48,6 +64,7 @@ export default {
         letter.length == 1 &&
         this.letters.includes(letter.toLowerCase())
       ) {
+        this.currentLetter = "";
         this.currentLetter = letter;
         if (this.colorData.hasOwnProperty(letter.toLowerCase())) {
           this.currentColor = this.colorData[letter.toLowerCase()];
@@ -56,10 +73,10 @@ export default {
         }
       }
     };
-    $("#edit").keydown(event => {
+    $("#letterBox").keydown(event => {
       setLetter(event.key);
     });
-    $("#edit").focus();
+    $("#letterBox").focus();
   },
   methods: {
     setGreetingMessage() {
@@ -68,11 +85,16 @@ export default {
     uploadData() {
       console.info("selected Color: ", this.currentEditColor);
       this.currentColor = this.currentEditColor;
+      this.currentLetter = "";
+      this.currentLetter = this.letterToEdit;
       this.colorData[this.letterToEdit.toLowerCase()] = this.currentEditColor;
       this.edit = false;
+      $("#letterBox").focus();
     },
     editColor(letter) {
       this.letterToEdit = letter;
+      this.currentLetter = "";
+      this.currentLetter = letter;
       this.edit = true;
     }
   }
@@ -85,8 +107,34 @@ export default {
   height: 100vh;
   width: 100vw;
 }
+#backgroundContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+  background-image: radial-gradient(
+    rgba(255, 255, 255, 1) 0%,
+    rgba(255, 255, 255, 0) 95%
+  );
+}
+#contentContainer {
+  flex: none;
+}
+#colorPicker {
+  margin: 20px auto 20px auto;
+}
+.main h2 {
+  margin-top: 10px;
+}
 h3 {
   margin: 40px 0 0;
+}
+#letterBox {
+  width: 90px;
+  margin: 20px auto 20px auto;
+  font-size: 5vh;
+  text-align: center !important;
 }
 ul {
   list-style-type: none;
