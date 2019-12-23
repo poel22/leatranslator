@@ -1,6 +1,6 @@
 <template>
   <v-app id="app">
-    <ColorTranslator :colorData="{}" />
+    <ColorTranslator />
   </v-app>
 </template>
 

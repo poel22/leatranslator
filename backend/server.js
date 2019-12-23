@@ -8,13 +8,13 @@ const path = "./colors.json"
 
 app.use(bodyParser.json())
 
-app.post('/api/save', (req, res) => {
+app.post('/api/colors', (req, res) => {
 	console.log(req.body);
 	fs.writeFileSync(path, JSON.stringify(req.body));
 	res.end("Successfully Saved")
 });
 
-app.get('/api/get', (req, res) => {
+app.get('/api/colors', (req, res) => {
 	var content = fs.readFileSync(path, 'utf8');
 	res.end(content)
 });

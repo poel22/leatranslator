@@ -2,7 +2,7 @@
   <div id="container" :style="{ backgroundColor: currentColor }">
     <div id="backgroundContainer">
       <div id="contentContainer">
-        <div class="main" v-if="!edit">
+        <div class="main" v-show="!edit">
           <h1>{{ currentMessage }}</h1>
           <div id="letterContainer">
             <input type="text" id="letterBox" :value="currentLetter" />
@@ -11,13 +11,13 @@
             Farbe ändern
           </button>
         </div>
-        <div class="edit" v-else>
+        <div class="edit" v-show="edit">
           <h1>Farbe ändern</h1>
           <div id="letterContainer">
             <input
               disabled
               type="text"
-              id="letterBox"
+              id="editLetterBox"
               v-model="currentLetter"
             />
           </div>
@@ -38,15 +38,11 @@
 import $ from "jquery";
 export default {
   name: "ColorTranslator",
-  props: {
-    colorData: {
-      type: Object,
-      required: true
-    }
-  },
   data() {
     return {
+      colorData: {},
       edit: false,
+      url: "api/colors",
       currentEditColor: "",
       currentColor: "",
       currentMessage: "",
@@ -57,6 +53,13 @@ export default {
   },
   mounted() {
     this.setGreetingMessage();
+    if (location.hostname.includes("localhost")) {
+      this.url = "http://localhost:8081/" + this.url;
+    }
+
+    $.getJSON(this.url, data => {
+      this.colorData = data;
+    });
     const setLetter = letter => {
       console.log(this.colorData);
       if (
@@ -65,6 +68,7 @@ export default {
         this.letters.includes(letter.toLowerCase())
       ) {
         this.currentLetter = "";
+        console.log(letter);
         this.currentLetter = letter;
         if (this.colorData.hasOwnProperty(letter.toLowerCase())) {
           this.currentColor = this.colorData[letter.toLowerCase()];
@@ -74,9 +78,11 @@ export default {
       }
     };
     $("#letterBox").keydown(event => {
+      console.info("done sending");
+      event.preventDefault();
       setLetter(event.key);
     });
-    $("#letterBox").focus();
+    console.log("done");
   },
   methods: {
     setGreetingMessage() {
@@ -90,6 +96,11 @@ export default {
       this.colorData[this.letterToEdit.toLowerCase()] = this.currentEditColor;
       this.edit = false;
       $("#letterBox").focus();
+      let xhr = new XMLHttpRequest();
+      xhr.open("POST", this.url);
+      xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+      // send the collected data as JSON
+      xhr.send(JSON.stringify(this.colorData));
     },
     editColor(letter) {
       this.letterToEdit = letter;
@@ -130,11 +141,15 @@ export default {
 h3 {
   margin: 40px 0 0;
 }
-#letterBox {
-  width: 90px;
+#letterBox,
+#editLetterBox {
+  width: 120px;
   margin: 20px auto 20px auto;
   font-size: 5vh;
   text-align: center !important;
+  border: solid #000;
+  border-radius: 4px;
+  border-width: 1px;
 }
 ul {
   list-style-type: none;
