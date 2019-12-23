@@ -77,7 +77,7 @@ export default {
         }
       }
     };
-    $("#letterBox").keydown(event => {
+    $("#letterBox").on("keyup", event => {
       console.info("done sending");
       event.preventDefault();
       setLetter(event.key);
